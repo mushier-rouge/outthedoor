@@ -3,10 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireSession } from '@/lib/auth/session';
 import { acceptQuote } from '@/lib/services/quotes';
 
-export async function POST(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await requireSession(['buyer']);
-    const quote = await acceptQuote({ quoteId: params.id, buyerId: session.userId });
+    const { id } = await params;
+    const quote = await acceptQuote({ quoteId: id, buyerId: session.userId });
     return NextResponse.json({ quote });
   } catch (error) {
     console.error(error);

@@ -51,13 +51,14 @@ function computeStepState(current: string, step: string) {
   return 'pending';
 }
 
-export default async function BriefDetailPage({ params }: { params: { id: string } }) {
+export default async function BriefDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getSessionContext();
   if (!session) {
     redirect('/login');
   }
 
-  const brief = await getBriefDetail(params.id);
+  const { id } = await params;
+  const brief = await getBriefDetail(id);
   if (!brief) {
     redirect('/briefs');
   }

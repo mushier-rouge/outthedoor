@@ -4,8 +4,9 @@ import { DealerQuoteForm } from '@/components/dealer/dealer-quote-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getInviteByToken } from '@/lib/services/dealers';
 
-export default async function DealerPortalPage({ params }: { params: { token: string } }) {
-  const invite = await getInviteByToken(params.token);
+export default async function DealerPortalPage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = await params;
+  const invite = await getInviteByToken(token);
 
   if (!invite) {
     return (
@@ -45,7 +46,7 @@ export default async function DealerPortalPage({ params }: { params: { token: st
         </CardContent>
       </Card>
 
-      <DealerQuoteForm token={params.token} />
+      <DealerQuoteForm token={token} />
     </main>
   );
 }

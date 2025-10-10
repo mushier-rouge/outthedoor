@@ -6,13 +6,14 @@ import { contractDiffInputSchema } from '@/lib/validation/contract';
 import { prisma } from '@/lib/prisma';
 import { sendContractMismatchEmail } from '@/lib/services/email';
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await requireSession(['ops']);
     const body = await request.json();
     const diffInput = contractDiffInputSchema.parse(body);
+    const { id } = await params;
 
-    const contract = await checkContractAgainstQuote({ contractId: params.id, input: diffInput });
+    const contract = await checkContractAgainstQuote({ contractId: id, input: diffInput });
 
     if (contract.status === 'mismatch') {
       const withRelations = await prisma.contract.findUnique({

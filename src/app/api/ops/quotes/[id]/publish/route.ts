@@ -9,12 +9,13 @@ const schema = z.object({
   note: z.string().optional(),
 });
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await requireSession(['ops']);
     const body = await request.json().catch(() => ({}));
     const { confidence, note } = schema.parse(body);
-    const quote = await publishDraftQuote({ quoteId: params.id, confidence, note });
+    const { id } = await params;
+    const quote = await publishDraftQuote({ quoteId: id, confidence, note });
     return NextResponse.json({ quote });
   } catch (error) {
     console.error(error);

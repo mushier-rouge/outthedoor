@@ -4,9 +4,10 @@ import { getInviteByToken, markInviteViewed } from '@/lib/services/dealers';
 import { dealerQuoteSchema } from '@/lib/validation/quote';
 import { submitDealerQuote } from '@/lib/services/quotes';
 
-export async function GET(_request: NextRequest, { params }: { params: { token: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   try {
-    const invite = await getInviteByToken(params.token);
+    const { token } = await params;
+    const invite = await getInviteByToken(token);
 
     if (!invite) {
       return NextResponse.json({ message: 'Invite not found' }, { status: 404 });
@@ -25,9 +26,10 @@ export async function GET(_request: NextRequest, { params }: { params: { token: 
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { token: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   try {
-    const invite = await getInviteByToken(params.token);
+    const { token } = await params;
+    const invite = await getInviteByToken(token);
     if (!invite) {
       return NextResponse.json({ message: 'Invite not found' }, { status: 404 });
     }

@@ -10,13 +10,14 @@ const requestSchema = z.object({
   dealerIds: z.array(z.string().uuid()).min(1),
 });
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await requireSession(['ops']);
     const body = await request.json();
     const { dealerIds } = requestSchema.parse(body);
 
-    const brief = await getBriefDetail(params.id);
+    const { id } = await params;
+    const brief = await getBriefDetail(id);
     if (!brief) {
       return NextResponse.json({ message: 'Brief not found' }, { status: 404 });
     }

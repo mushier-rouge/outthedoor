@@ -5,14 +5,15 @@ import { sendCounterEmail } from '@/lib/services/email';
 import { sendCounter } from '@/lib/services/quotes';
 import { requireSession } from '@/lib/auth/session';
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await requireSession(['buyer', 'ops']);
     const body = await request.json();
     const counter = counterRequestSchema.parse(body);
+    const { id } = await params;
 
     const quote = await sendCounter({
-      quoteId: params.id,
+      quoteId: id,
       actor: session.role,
       request: counter,
     });

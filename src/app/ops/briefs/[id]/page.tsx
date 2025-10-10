@@ -36,13 +36,14 @@ function formatPaymentSummaries(paymentPreferences: unknown, fallbackType: strin
   });
 }
 
-export default async function OpsBriefDetailPage({ params }: { params: { id: string } }) {
+export default async function OpsBriefDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getSessionContext();
   if (!session || session.role !== 'ops') {
     redirect('/login');
   }
 
-  const [brief, dealers] = await Promise.all([getBriefDetail(params.id), listDealers()]);
+  const { id } = await params;
+  const [brief, dealers] = await Promise.all([getBriefDetail(id), listDealers()]);
   if (!brief) {
     redirect('/ops');
   }
