@@ -74,7 +74,7 @@ export default function AuthCallbackPage() {
         <h1 className="text-2xl font-semibold">Couldn&apos;t sign you in</h1>
         <p className="text-sm text-muted-foreground">{error}</p>
         <p className="text-xs text-muted-foreground">
-          Request a fresh magic link or contact ops@outthedoor.app if the issue persists.
+          Request a fresh magic link or contact ops@nmbli.app if the issue persists.
         </p>
       </main>
     );

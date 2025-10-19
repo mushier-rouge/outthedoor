@@ -3,6 +3,19 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
 const DEBUG_AUTH = process.env.DEBUG_AUTH?.toLowerCase() === 'true';
 
+function shouldRequireInviteCode() {
+  return (process.env.DEV_REQUIRE_INVITE_CODE ?? '').toLowerCase() === 'true';
+}
+
+function hasInviteAccess(metadata: Record<string, unknown> | null | undefined) {
+  if (!metadata) return false;
+  const value = metadata.devInviteGranted ?? metadata.dev_invite_granted;
+  if (typeof value === 'string') {
+    return value.toLowerCase() === 'true';
+  }
+  return Boolean(value);
+}
+
 function debugAuth(scope: string, message: string, payload?: Record<string, unknown>) {
   if (!DEBUG_AUTH) return;
   if (payload) {

@@ -1,4 +1,5 @@
-import type { Prisma } from '@/generated/prisma';
+import type { BriefStatus, TimelineActor, TimelineEventType } from '@/generated/prisma';
+import { TimelineActor as TimelineActorEnum, TimelineEventType as TimelineEventTypeEnum } from '@/generated/prisma';
 import { prisma } from '@/lib/prisma';
 import { recordTimelineEvent } from './timeline';
 import { toDecimal } from '@/lib/utils/prisma-helpers';
@@ -40,8 +41,8 @@ export async function createBrief(params: { buyerId: string; input: CreateBriefI
 
   await recordTimelineEvent({
     briefId: brief.id,
-    type: 'brief_created' as Prisma.TimelineEventType,
-    actor: 'buyer' as Prisma.TimelineActor,
+    type: TimelineEventTypeEnum.brief_created,
+    actor: TimelineActorEnum.buyer,
     payload: {
       paymentType: brief.paymentType,
       paymentPreferences,
@@ -73,6 +74,9 @@ export async function getBriefDetail(briefId: string) {
       timelineEvents: {
         orderBy: { createdAt: 'desc' },
       },
+      dealerProspects: {
+        orderBy: { createdAt: 'desc' },
+      },
     },
   });
 }
@@ -90,7 +94,7 @@ export async function listBuyerBriefs(buyerId: string) {
   });
 }
 
-export async function updateBriefStatus(briefId: string, status: Prisma.BriefStatus) {
+export async function updateBriefStatus(briefId: string, status: BriefStatus) {
   return prisma.brief.update({
     where: { id: briefId },
     data: { status },
